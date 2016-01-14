@@ -58,12 +58,18 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
  * }}
  */
 module.exports = (scriptPath, format) => {
-    if (!scriptPath || ! fs.existsSync(scriptPath)) {
+    if (!scriptPath) {
+        return null;
+    }
+    let ext = ~scriptPath.indexOf('.js') ? '' : '.js',
+        filePath = `${scriptPath}${ext}` ;
+    if (!fs.existsSync(filePath)) {
         return null;
     }
 
-    let script = fs.readFileSync(scriptPath, 'utf8'),
-        name = path.basename(scriptPath, '.js'),
+    let ext = ~filePath.indexOf('.js') ? '' : '.js',
+        script = fs.readFileSync(filePath, 'utf8'),
+        name = path.basename(filePath, '.js'),
         prefix = name.substr(0, 2).toLowerCase(),
         type = $TYPES[prefix],
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
@@ -149,9 +155,9 @@ module.exports = (scriptPath, format) => {
     }
 
     if (format === 'nsmockup') {
-        let dir = path.dirname(scriptPath);
+        let dir = path.dirname(filePath);
         nsObj.files = [
-            [scriptPath, nsObj.alias]
+            [filePath, nsObj.alias]
         ];
 
         nsObj.libs.forEach(lib => {
