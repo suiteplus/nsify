@@ -164,7 +164,6 @@ module.exports = (scriptPath, format) => {
                 libPath = path.resolve(`${dir}/${lib}${ext}`),
                 libScript = module.exports(libPath);
 
-            console.log(libPath, libScript);
             nsObj.files.push([libPath, libScript.alias]);
         });
 
