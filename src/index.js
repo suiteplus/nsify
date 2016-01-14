@@ -67,8 +67,7 @@ module.exports = (scriptPath, format) => {
         return null;
     }
 
-    let ext = ~filePath.indexOf('.js') ? '' : '.js',
-        script = fs.readFileSync(filePath, 'utf8'),
+    let script = fs.readFileSync(filePath, 'utf8'),
         name = path.basename(filePath, '.js'),
         prefix = name.substr(0, 2).toLowerCase(),
         type = $TYPES[prefix],
