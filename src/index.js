@@ -17,6 +17,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_ALIAS = /@ns.alias:[ ]*("|')([\w ]*)("|')/,
     $RE_DESC = /@ns.desc:[ ]*("|')([\w ]*)("|')/,
     $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
+    $RE_RECORD = /@ns.record:[ ]*("|')([\w ]*)("|')/,
     $RE_FUNC = /@ns.function:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
     $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
     $RE_FUNC_BEFORE_LOAD = $RE_FUNC_DEF('beforeLoad'),
@@ -30,7 +31,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
     $RE_PARAM = `@ns.params.([A-Za-z0-9\_-]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
-module.exports = (scriptPath) => {
+module.exports = (scriptPath, format) => {
     if (!scriptPath || ! fs.existsSync(scriptPath)) {
         return null;
     }
@@ -69,6 +70,7 @@ module.exports = (scriptPath) => {
                 pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[2] : 'pageInit',
                 saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[2] : 'saveRecord'
             };
+            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
         case 'schedule':
             nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'process';
@@ -90,6 +92,7 @@ module.exports = (scriptPath) => {
                 beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[2] : 'beforeSubmit',
                 afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : 'afterSubmit'
             };
+            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
     }
 
@@ -117,6 +120,25 @@ module.exports = (scriptPath) => {
         } else {
             nsObj.params[param] = {type: value.substring(1, value.length-1)};
         }
+    }
+
+    if (format === 'nsmockup') {
+        let dir = path.dirname(scriptPath);
+        nsObj.files = [
+            [scriptPath, nsObj.alias]
+        ];
+
+        nsObj.libs.forEach(lib => {
+            let ext = ~lib.indexOf('.js') ? '' : '.js',
+                libPath = path.resolve(`${dir}/${lib}${ext}`),
+                libScript = module.exports(libPath);
+
+            nsObj.files.push([libPath, libScript.alias]);
+        });
+
+        ['alias', 'libs'].forEach(prop => {
+            delete nsObj[prop];
+        })
     }
 
     return nsObj;
