@@ -31,6 +31,32 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
     $RE_PARAM = `@ns.params.([A-Za-z0-9\_-]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
+/**
+ *
+ * @param scriptPath {string}
+ * @param [format] {'nsmockup'}
+ * @returns {{
+ *    id: string,
+ *    name: string,
+ *    desc: string,
+ *    alias: string,
+ *    [function]: string,
+ *    [functions]: {
+ *      [post]: string,
+ *      [get]: string,
+ *      [delete]: string,
+ *      [put]: string,
+ *      [afterSubmit]: string,
+ *      [beforeSubmit]: string,
+ *      [beforeLoad]: string,
+ *      [pageInit]: string,
+ *      [saveRecord]: string
+ *    },
+ *    libs: [string],
+ *    params: object,
+ *    [record]: string
+ * }}
+ */
 module.exports = (scriptPath, format) => {
     if (!scriptPath || ! fs.existsSync(scriptPath)) {
         return null;
