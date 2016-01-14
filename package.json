@@ -1,0 +1,30 @@
+{
+  "name": "nsify",
+  "version": "0.1.0",
+  "description": "NetSuite-side require() the node.js",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suiteplus/nsify.git"
+  },
+  "keywords": [
+    "netsuite",
+    "require",
+    "browserify",
+    "bundle",
+    "suiteplus",
+    "s+"
+  ],
+  "author": "daniel.joppi@suiteplus.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/suiteplus/nsify/issues"
+  },
+  "homepage": "https://github.com/suiteplus/nsify#readme",
+  "dependencies": {
+    "uppercamelcase": "^1.1.0"
+  }
+}
