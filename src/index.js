@@ -29,7 +29,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_FUNC_PUT = $RE_FUNC_DEF('put'),
     $RE_FUNC_PAGE_INIT = $RE_FUNC_DEF('pageInit'),
     $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
-    $RE_PARAM = `@ns.params.([A-Za-z0-9\_-]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
+    $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
 /**
  *
@@ -73,7 +73,7 @@ module.exports = (scriptPath, format) => {
         type = $TYPES[prefix] || 'library',
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
 
-    let nsId = $RE_ID.test(script) ? $RE_ID.exec(script)[2] : id,
+    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[2] : id).replace('customscript', ''),
         nsObj = {
             id: nsId,
             name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[2] : nsId.replace(/[_-]/g, ' '),
@@ -93,7 +93,9 @@ module.exports = (scriptPath, format) => {
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         }
     }).join(' ');
-    nsObj.alias = camelcase(nsObj.alias);
+    if (/[ -;:/]/.test(nsObj.alias)) {
+        nsObj.alias = camelcase(nsObj.alias);
+    }
 
     switch (nsObj.type) {
         case 'client':
@@ -132,17 +134,19 @@ module.exports = (scriptPath, format) => {
     if (nsObj.functions) {
         let funcs = nsObj.functions;
         Object.keys(nsObj.functions).forEach(func => {
-            let funcName = funcs[func];
+            let funcName = funcs[func].trim();
+            funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;
             if (scriptObj[funcName]) {
-                funcs[func] = `${alias}.${name}`;
+                funcs[func] = `${alias}.${funcName}`;
             } else {
                 delete funcs[func];
             }
         });
     } else if (nsObj.function) {
-        let funcName = nsObj.function;
+        let funcName = nsObj.function.trim();
+        funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;
         if (scriptObj[funcName]) {
-            nsObj.function = `${alias}.${name}`;
+            nsObj.function = `${alias}.${funcName}`;
         } else {
             delete nsObj.function;
         }
@@ -165,6 +169,10 @@ module.exports = (scriptPath, format) => {
     }
 
     if (format === 'nsmockup') {
+        if (nsObj.id.indexOf('customscript') !== 0) {
+            nsObj.id = `customscript${nsObj.id}`;
+        }
+
         let dir = path.dirname(filePath);
         nsObj.files = [
             [filePath, nsObj.alias]
