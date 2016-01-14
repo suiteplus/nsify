@@ -136,7 +136,7 @@ module.exports = (scriptPath, format) => {
             nsObj.files.push([libPath, libScript.alias]);
         });
 
-        ['alias', 'libs'].forEach(prop => {
+        ['libs'].forEach(prop => {
             delete nsObj[prop];
         })
     }
