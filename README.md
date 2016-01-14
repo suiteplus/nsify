@@ -1,5 +1,7 @@
-# nsify
-NetSuite-side require() the node.js 
+# nsify [![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url] [![Coveralls Status][coveralls-image]][coveralls-url]
+
+*NetSuite-side require() the node.js*  
 
 ## Required
  * node.js 4+
@@ -43,7 +45,7 @@ module.exports = {
     "id": "sp-schedule",
     "type": "schedule",
     "alias": "MySchedule",
-    "function": "MySchedule.process"
+    "function": "MySchedule.process",
     "libs": [
         "my-lib.js"
     ],
@@ -52,3 +54,18 @@ module.exports = {
     }
 }
 ```
+
+[npm-url]: https://npmjs.org/package/nsify
+[npm-image]: http://img.shields.io/npm/v/nsify.svg
+
+[travis-url]: https://travis-ci.org/suiteplus/nsify
+[travis-image]: https://img.shields.io/travis/suiteplus/nsify.svg
+
+[coveralls-url]: https://coveralls.io/r/suiteplus/nsify
+[coveralls-image]: http://img.shields.io/coveralls/suiteplus/nsify/master.svg
+
+[david-url]: https://david-dm.org/suiteplus/nsify
+[david-image]: https://david-dm.org/suiteplus/nsify.svg
+
+[david-url-dev]: https://david-dm.org/suiteplus/nsify#info=devDependencies
+[david-image-dev]: https://david-dm.org/suiteplus/nsify/dev-status.svg
