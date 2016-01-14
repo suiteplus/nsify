@@ -70,8 +70,12 @@ module.exports = (scriptPath, format) => {
     let script = fs.readFileSync(filePath, 'utf8'),
         name = path.basename(filePath, '.js'),
         prefix = name.substr(0, 2).toLowerCase(),
-        type = $TYPES[prefix] || 'library',
+        type = $TYPES[prefix],
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
+
+    if (!type) {
+        type = 'library';
+    }
 
     let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[2] : id).replace('customscript', ''),
         nsObj = {
