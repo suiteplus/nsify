@@ -71,10 +71,10 @@ module.exports = (scriptPath) => {
             };
             break;
         case 'schedule':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[2] : 'process';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'process';
             break;
         case 'suitelet':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[2] : 'execute';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'execute';
             break;
         case 'restlet':
             nsObj.functions = {
