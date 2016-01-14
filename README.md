@@ -8,7 +8,7 @@
 
 ## Install [![Dependency Status][david-image]][david-url] [![devDependency Status][david-image-dev]][david-url-dev]
 ```bash
-    npm install nsify -save-dev
+    npm install nsify --save-dev
 ```
 
 ### Usage
