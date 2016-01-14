@@ -17,18 +17,17 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_ALIAS = /@ns.alias:[ ]*("|')([\w ]*)("|')/,
     $RE_DESC = /@ns.desc:[ ]*("|')([\w ]*)("|')/,
     $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
-    $RE_FUNC = (f) => new RegExp(`@ns.function.${f}:[ ]*("|')([\w\.]*)("|')`),
-    $RE_FUNC_PROCESS = $RE_FUNC('process'),
-    $RE_FUNC_EXECUTE = $RE_FUNC('execute'),
-    $RE_FUNC_BEFORE_LOAD = $RE_FUNC('beforeLoad'),
-    $RE_FUNC_BEFORE_SMT = $RE_FUNC('beforeSubmit'),
-    $RE_FUNC_AFTER_SMT = $RE_FUNC('afterSubmit'),
-    $RE_FUNC_POST = $RE_FUNC('post'),
-    $RE_FUNC_GET = $RE_FUNC('get'),
-    $RE_FUNC_DELETE = $RE_FUNC('delete'),
-    $RE_FUNC_PUT = $RE_FUNC('put'),
-    $RE_FUNC_PAGE_INIT = $RE_FUNC('pageInit'),
-    $RE_FUNC_SAVE_REC = $RE_FUNC('saveRecord'),
+    $RE_FUNC = /@ns.function:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
+    $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
+    $RE_FUNC_BEFORE_LOAD = $RE_FUNC_DEF('beforeLoad'),
+    $RE_FUNC_BEFORE_SMT = $RE_FUNC_DEF('beforeSubmit'),
+    $RE_FUNC_AFTER_SMT = $RE_FUNC_DEF('afterSubmit'),
+    $RE_FUNC_POST = $RE_FUNC_DEF('post'),
+    $RE_FUNC_GET = $RE_FUNC_DEF('get'),
+    $RE_FUNC_DELETE = $RE_FUNC_DEF('delete'),
+    $RE_FUNC_PUT = $RE_FUNC_DEF('put'),
+    $RE_FUNC_PAGE_INIT = $RE_FUNC_DEF('pageInit'),
+    $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
     $RE_PARAM = `@ns.params.([A-Za-z0-9\_-]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
 module.exports = (scriptPath) => {
@@ -72,10 +71,10 @@ module.exports = (scriptPath) => {
             };
             break;
         case 'schedule':
-            nsObj.function = $RE_FUNC_PROCESS.test(script) ? $RE_FUNC_PROCESS.exec(script)[2] : 'process';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[2] : 'process';
             break;
         case 'suitelet':
-            nsObj.function = $RE_FUNC_EXECUTE.test(script) ? $RE_FUNC_EXECUTE.exec(script)[2] : 'execute';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[2] : 'execute';
             break;
         case 'restlet':
             nsObj.functions = {
@@ -92,6 +91,16 @@ module.exports = (scriptPath) => {
                 afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : 'afterSubmit'
             };
             break;
+    }
+
+    let alias = nsObj.alias;
+    if (nsObj.functions) {
+        let funcs = nsObj.functions;
+        Object.keys(nsObj.functions).forEach(func => {
+            funcs[func] = `${alias}.${funcs[func]}`;
+        });
+    } else {
+        nsObj.function = `${alias}.${nsObj.function}`;
     }
 
     let reParam = new RegExp($RE_PARAM, 'g');
