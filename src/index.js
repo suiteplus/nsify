@@ -16,7 +16,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_TYPE = /@ns.type:[ ]*("|')([\w ]*)("|')/,
     $RE_ALIAS = /@ns.alias:[ ]*("|')([\w ]*)("|')/,
     $RE_DESC = /@ns.desc:[ ]*("|')([\w ]*)("|')/,
-    $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
+    $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:-]*)("|'),?[ ]*)*/,
     $RE_RECORD = /@ns.record:[ ]*("|')([\w ]*)("|')/,
     $RE_FUNC = /@ns.function:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
     $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
@@ -70,7 +70,7 @@ module.exports = (scriptPath, format) => {
     let script = fs.readFileSync(filePath, 'utf8'),
         name = path.basename(filePath, '.js'),
         prefix = name.substr(0, 2).toLowerCase(),
-        type = $TYPES[prefix],
+        type = $TYPES[prefix] || 'library',
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
 
     let nsId = $RE_ID.test(script) ? $RE_ID.exec(script)[2] : id,
@@ -133,7 +133,7 @@ module.exports = (scriptPath, format) => {
         Object.keys(nsObj.functions).forEach(func => {
             funcs[func] = `${alias}.${funcs[func]}`;
         });
-    } else {
+    } else if (nsObj.function) {
         nsObj.function = `${alias}.${nsObj.function}`;
     }
 
@@ -164,6 +164,7 @@ module.exports = (scriptPath, format) => {
                 libPath = path.resolve(`${dir}/${lib}${ext}`),
                 libScript = module.exports(libPath);
 
+            console.log(libPath, libScript);
             nsObj.files.push([libPath, libScript.alias]);
         });
 
