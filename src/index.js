@@ -127,14 +127,25 @@ module.exports = (scriptPath, format) => {
             break;
     }
 
-    let alias = nsObj.alias;
+    let alias = nsObj.alias,
+        scriptObj = require(filePath);
     if (nsObj.functions) {
         let funcs = nsObj.functions;
         Object.keys(nsObj.functions).forEach(func => {
-            funcs[func] = `${alias}.${funcs[func]}`;
+            let funcName = funcs[func];
+            if (scriptObj[funcName]) {
+                funcs[func] = `${alias}.${name}`;
+            } else {
+                delete funcs[func];
+            }
         });
     } else if (nsObj.function) {
-        nsObj.function = `${alias}.${nsObj.function}`;
+        let funcName = nsObj.function;
+        if (scriptObj[funcName]) {
+            nsObj.function = `${alias}.${name}`;
+        } else {
+            delete nsObj.function;
+        }
     }
 
     let reParam = new RegExp($RE_PARAM, 'g');
