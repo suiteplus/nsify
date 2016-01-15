@@ -1,11 +1,9 @@
 /**
- * @ns.id: 'my-schedule'
- * @ns.name: 'My Schedule'
- * @ns.desc: 'My Schedule Description'
+ * @ns.id: 'my-schedule-simple'
+ * @ns.desc: 'My Schedule Simple Description'
  * @ns.type: 'schedule'
- * @ns.alias: 'MySchedule'
  * @ns.function: 'processLegal'
- * @ns.params.my-param: {name: 'My Param', type: 'TEXT'}
+ * @ns.params.my-param_s: {name: 'My Param', type: 'TEXT'}
  */
 'use strict';
 module.exports = {
