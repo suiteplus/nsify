@@ -192,7 +192,7 @@ module.exports = (scriptPath, format) => {
 
         ['libs'].forEach(prop => {
             delete nsObj[prop];
-        })
+        });
     }
 
     return nsObj;

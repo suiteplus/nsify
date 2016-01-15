@@ -1,10 +1,10 @@
 {
   "name": "nsify",
-  "version": "0.1.0",
+  "version": "0.2.0-pre",
   "description": "NetSuite-side require() the node.js",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,16 @@
   "homepage": "https://github.com/suiteplus/nsify#readme",
   "dependencies": {
     "uppercamelcase": "^1.1.0"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.6",
+    "eslint-plugin-mocha": "^1.1.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-load-plugins": "^1.2.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-plumber": "^1.0.1",
+    "require-dir": "^0.3.0",
+    "should": "^8.1.1"
   }
 }
