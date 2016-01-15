@@ -29,7 +29,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_FUNC_PUT = $RE_FUNC_DEF('put'),
     $RE_FUNC_PAGE_INIT = $RE_FUNC_DEF('pageInit'),
     $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
-    $RE_PARAM = `@ns.params.([A-Za-z0-9\_-]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
+    $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
 /**
  *
@@ -70,10 +70,14 @@ module.exports = (scriptPath, format) => {
     let script = fs.readFileSync(filePath, 'utf8'),
         name = path.basename(filePath, '.js'),
         prefix = name.substr(0, 2).toLowerCase(),
-        type = $TYPES[prefix] || 'library',
+        type = $TYPES[prefix],
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
 
-    let nsId = $RE_ID.test(script) ? $RE_ID.exec(script)[2] : id,
+    if (!type) {
+        type = 'library';
+    }
+
+    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[2] : id).replace('customscript', ''),
         nsObj = {
             id: nsId,
             name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[2] : nsId.replace(/[_-]/g, ' '),
@@ -93,7 +97,9 @@ module.exports = (scriptPath, format) => {
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         }
     }).join(' ');
-    nsObj.alias = camelcase(nsObj.alias);
+    if (/[ -;:/]/.test(nsObj.alias)) {
+        nsObj.alias = camelcase(nsObj.alias);
+    }
 
     switch (nsObj.type) {
         case 'client':
@@ -127,27 +133,6 @@ module.exports = (scriptPath, format) => {
             break;
     }
 
-    let alias = nsObj.alias,
-        scriptObj = require(filePath);
-    if (nsObj.functions) {
-        let funcs = nsObj.functions;
-        Object.keys(nsObj.functions).forEach(func => {
-            let funcName = funcs[func];
-            if (scriptObj[funcName]) {
-                funcs[func] = `${alias}.${name}`;
-            } else {
-                delete funcs[func];
-            }
-        });
-    } else if (nsObj.function) {
-        let funcName = nsObj.function;
-        if (scriptObj[funcName]) {
-            nsObj.function = `${alias}.${name}`;
-        } else {
-            delete nsObj.function;
-        }
-    }
-
     let reParam = new RegExp($RE_PARAM, 'g');
     for (let match; (match = reParam.exec(script)); ) {
         let param = match[1],
@@ -165,23 +150,8 @@ module.exports = (scriptPath, format) => {
     }
 
     if (format === 'nsmockup') {
-        let dir = path.dirname(filePath);
-        nsObj.files = [
-            [filePath, nsObj.alias]
-        ];
-
-        nsObj.libs.forEach(lib => {
-            let ext = ~lib.indexOf('.js') ? '' : '.js',
-                libPath = path.resolve(`${dir}/${lib}${ext}`),
-                libScript = module.exports(libPath);
-
-            nsObj.files.push([libPath, libScript.alias]);
-        });
-
-        ['libs'].forEach(prop => {
-            delete nsObj[prop];
-        })
+        return require('./nsmockup-parse')(nsObj, filePath);
+    } else {
+        return nsObj;
     }
-
-    return nsObj;
 };
