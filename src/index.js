@@ -29,6 +29,15 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_FUNC_PUT = $RE_FUNC_DEF('put'),
     $RE_FUNC_PAGE_INIT = $RE_FUNC_DEF('pageInit'),
     $RE_FUNC_SAVE_REC = $RE_FUNC_DEF('saveRecord'),
+    $RE_FUNC_VALIDATE_FIELD = $RE_FUNC_DEF('validateField'),
+    $RE_FUNC_FIELD_CHANGED = $RE_FUNC_DEF('fieldChanged'),
+    $RE_FUNC_POST_SOURCING = $RE_FUNC_DEF('postSourcing'),
+    $RE_FUNC_LINE_INIT = $RE_FUNC_DEF('lineInit'),
+    $RE_FUNC_VALIDATE_LINE = $RE_FUNC_DEF('validateLine'),
+    $RE_FUNC_VALIDATE_INSERT = $RE_FUNC_DEF('validateInsert'),
+    $RE_FUNC_VALIDATE_DELETE = $RE_FUNC_DEF('validateDelete'),
+    $RE_FUNC_RECALC = $RE_FUNC_DEF('recalc'),
+
     $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((("|')([A-Za-z-]*)("|'))|({([A-Za-z-:'"\., ]*)}))`;
 
 /**
@@ -104,8 +113,16 @@ module.exports = (scriptPath, format) => {
     switch (nsObj.type) {
         case 'client':
             nsObj.functions = {
-                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[2] : 'pageInit',
-                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[2] : 'saveRecord'
+                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[2] : '',
+                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[2] : '',
+                validateField: $RE_FUNC_VALIDATE_FIELD.test(script) ? $RE_FUNC_VALIDATE_FIELD.exec(script)[2] : '',
+                fieldChanged: $RE_FUNC_FIELD_CHANGED.test(script) ? $RE_FUNC_FIELD_CHANGED.exec(script)[2] : '',
+                postSourcing: $RE_FUNC_POST_SOURCING.test(script) ? $RE_FUNC_POST_SOURCING.exec(script)[2] : '',
+                lineInit: $RE_FUNC_LINE_INIT.test(script) ? $RE_FUNC_LINE_INIT.exec(script)[2] : '',
+                validateLine: $RE_FUNC_VALIDATE_LINE.test(script) ? $RE_FUNC_VALIDATE_LINE.exec(script)[2] : '',
+                validateInsert: $RE_FUNC_VALIDATE_INSERT.test(script) ? $RE_FUNC_VALIDATE_INSERT.exec(script)[2] : '',
+                validateDelete: $RE_FUNC_VALIDATE_DELETE.test(script) ? $RE_FUNC_VALIDATE_DELETE.exec(script)[2] : '',
+                recalc: $RE_FUNC_RECALC.test(script) ? $RE_FUNC_RECALC.exec(script)[2] : ''
             };
             nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
