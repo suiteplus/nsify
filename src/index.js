@@ -133,29 +133,6 @@ module.exports = (scriptPath, format) => {
             break;
     }
 
-    let alias = nsObj.alias,
-        scriptObj = require(filePath);
-    if (nsObj.functions) {
-        let funcs = nsObj.functions;
-        Object.keys(nsObj.functions).forEach(func => {
-            let funcName = funcs[func].trim();
-            funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;
-            if (scriptObj[funcName]) {
-                funcs[func] = `${alias}.${funcName}`;
-            } else {
-                delete funcs[func];
-            }
-        });
-    } else if (nsObj.function) {
-        let funcName = nsObj.function.trim();
-        funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;
-        if (scriptObj[funcName]) {
-            nsObj.function = `${alias}.${funcName}`;
-        } else {
-            delete nsObj.function;
-        }
-    }
-
     let reParam = new RegExp($RE_PARAM, 'g');
     for (let match; (match = reParam.exec(script)); ) {
         let param = match[1],
@@ -173,27 +150,8 @@ module.exports = (scriptPath, format) => {
     }
 
     if (format === 'nsmockup') {
-        if (nsObj.id.indexOf('customscript') !== 0) {
-            nsObj.id = `customscript${nsObj.id}`;
-        }
-
-        let dir = path.dirname(filePath);
-        nsObj.files = [
-            [filePath, nsObj.alias]
-        ];
-
-        nsObj.libs.forEach(lib => {
-            let ext = ~lib.indexOf('.js') ? '' : '.js',
-                libPath = path.resolve(`${dir}/${lib}${ext}`),
-                libScript = module.exports(libPath);
-
-            nsObj.files.push([libPath, libScript.alias]);
-        });
-
-        ['libs'].forEach(prop => {
-            delete nsObj[prop];
-        });
+        return require('./nsmockup-parse')(nsObj, filePath);
+    } else {
+        return nsObj;
     }
-
-    return nsObj;
 };
