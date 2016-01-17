@@ -64,7 +64,7 @@ var parseStr = (l) => l.replace(/['|"]/g, '').trim();
  *    },
  *    libs: [string],
  *    params: object,
- *    [record]: string
+ *    [records]: [string]
  * }}
  */
 module.exports = (scriptPath, format) => {
@@ -87,14 +87,14 @@ module.exports = (scriptPath, format) => {
         type = 'library';
     }
 
-    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[2] : id).replace('customscript', ''),
+    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[1] : id).replace('customscript', ''),
         nsObj = {
             id: nsId,
-            name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[2] : nsId.replace(/[_-]/g, ' '),
-            type: $RE_TYPE.test(script) ? $RE_TYPE.exec(script)[2] : type,
-            alias: $RE_ALIAS.test(script) ? $RE_ALIAS.exec(script)[2] : nsId,
-            desc: $RE_DESC.test(script) ? $RE_DESC.exec(script)[2] : '',
-            libs: $RE_LIBS.test(script) ? $RE_LIBS.exec(script)[0].replace(/(@ns.libs:)|[' ]/g, '').split(',') : [],
+            name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[1] : nsId.replace(/[_-]/g, ' '),
+            type: $RE_TYPE.test(script) ? $RE_TYPE.exec(script)[1] : type,
+            alias: $RE_ALIAS.test(script) ? $RE_ALIAS.exec(script)[1] : nsId,
+            desc: $RE_DESC.test(script) ? $RE_DESC.exec(script)[1] : '',
+            libs: $RE_LIBS.test(script) ? $RE_LIBS.exec(script)[1].split(',').map(parseStr) : [],
             params: {}
         };
 
@@ -112,35 +112,55 @@ module.exports = (scriptPath, format) => {
     }
 
     switch (nsObj.type) {
-        case 'client':
+        case 'client': {
             nsObj.functions = {
-                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[2] : 'pageInit',
-                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[2] : 'saveRecord'
+                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[1] : 'pageInit',
+                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[1] : 'saveRecord',
+                validateField: $RE_FUNC_VALIDATE_FIELD.test(script) ? $RE_FUNC_VALIDATE_FIELD.exec(script)[1] : 'validateField',
+                fieldChanged: $RE_FUNC_FIELD_CHANGED.test(script) ? $RE_FUNC_FIELD_CHANGED.exec(script)[1] : 'fieldChanged',
+                postSourcing: $RE_FUNC_POST_SOURCING.test(script) ? $RE_FUNC_POST_SOURCING.exec(script)[1] : 'postSourcing',
+                lineInit: $RE_FUNC_LINE_INIT.test(script) ? $RE_FUNC_LINE_INIT.exec(script)[1] : 'lineInit',
+                validateLine: $RE_FUNC_VALIDATE_LINE.test(script) ? $RE_FUNC_VALIDATE_LINE.exec(script)[1] : 'validateLine',
+                validateInsert: $RE_FUNC_VALIDATE_INSERT.test(script) ? $RE_FUNC_VALIDATE_INSERT.exec(script)[1] : 'validateInsert',
+                validateDelete: $RE_FUNC_VALIDATE_DELETE.test(script) ? $RE_FUNC_VALIDATE_DELETE.exec(script)[1] : 'validateDelete',
+                recalc: $RE_FUNC_RECALC.test(script) ? $RE_FUNC_RECALC.exec(script)[1] : 'recalc'
             };
-            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
+            let record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[1] : null;
+            if (record) {
+                nsObj.records = [record];
+            } else {
+                nsObj.records = $RE_RECORDS.test(script) ? $RE_RECORDS.exec(script)[0].split(',').map(parseStr) : [];
+            }
             break;
+        }
         case 'schedule':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'process';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'process';
             break;
         case 'suitelet':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'execute';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'execute';
             break;
         case 'restlet':
             nsObj.functions = {
-                get: $RE_FUNC_GET.test(script) ? $RE_FUNC_GET.exec(script)[2] : 'get',
-                delete: $RE_FUNC_DELETE.test(script) ? $RE_FUNC_DELETE.exec(script)[2] : 'delete',
-                post: $RE_FUNC_POST.test(script) ? $RE_FUNC_POST.exec(script)[2] : 'post',
-                put: $RE_FUNC_PUT.test(script) ? $RE_FUNC_PUT.exec(script)[2] : 'put'
+                get: $RE_FUNC_GET.test(script) ? $RE_FUNC_GET.exec(script)[1] : 'get',
+                delete: $RE_FUNC_DELETE.test(script) ? $RE_FUNC_DELETE.exec(script)[1] : 'delete',
+                post: $RE_FUNC_POST.test(script) ? $RE_FUNC_POST.exec(script)[1] : 'post',
+                put: $RE_FUNC_PUT.test(script) ? $RE_FUNC_PUT.exec(script)[1] : 'put'
             };
             break;
-        case 'user-event':
+        case 'user-event': {
             nsObj.functions = {
-                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[2] : 'beforeLoad',
-                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[2] : 'beforeSubmit',
-                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : 'afterSubmit'
+                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[1] : 'beforeLoad',
+                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[1] : 'beforeSubmit',
+                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[1] : 'afterSubmit'
             };
-            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
+            let record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[1] : '';
+            if (record) {
+                nsObj.records = [record];
+            } else {
+                nsObj.records = $RE_RECORDS.test(script) ? $RE_RECORDS.exec(script)[1].split(',').map(parseStr) : [];
+            }
             break;
+        }
     }
 
     let reParam = new RegExp($RE_PARAM, 'g');
