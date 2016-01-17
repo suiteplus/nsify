@@ -32,8 +32,7 @@ gulp.task('dev:eslint', function () {
     return gulp.src(paths.js.concat(paths.jsTests))
         .pipe(plugins.plumber())
         .pipe(plugins.eslint())
-        .pipe(plugins.eslint.format())
-        .pipe(plugins.eslint.failAfterError());
+        .pipe(plugins.eslint.format());
 });
 
 
