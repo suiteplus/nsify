@@ -29,6 +29,14 @@ const $RE_ID = /@ns.id:[ ]*["|']([\w -\_]*)["|']/,
     $RE_FUNC_PUT = /@ns.functions.put:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_PAGE_INIT = /@ns.functions.pageInit:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_SAVE_REC = /@ns.functions.saveRecord:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_VALIDATE_FIELD = /@ns.functions.validateField:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_FIELD_CHANGED = /@ns.functions.fieldChanged:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_POST_SOURCING = /@ns.functions.postSourcing:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_LINE_INIT = /@ns.functions.lineInit:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_VALIDATE_LINE = /@ns.functions.validateLine:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_VALIDATE_INSERT = /@ns.functions.validateInsert:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_VALIDATE_DELETE = /@ns.functions.validateDelete:[ ]*["|']([\w\.]*)["|']/,
+    $RE_FUNC_RECALC = /@ns.functions.recalc:[ ]*["|']([\w\.]*)["|']/,
     $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((["|']([A-Za-z-]*)["|'])|({([A-Za-z-:'"\., ]*)}))`;
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
@@ -56,7 +64,7 @@ var parseStr = (l) => l.replace(/['|"]/g, '').trim();
  *    },
  *    libs: [string],
  *    params: object,
- *    [records]: [string]
+ *    [record]: string
  * }}
  */
 module.exports = (scriptPath, format) => {
@@ -79,14 +87,14 @@ module.exports = (scriptPath, format) => {
         type = 'library';
     }
 
-    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[1] : id).replace('customscript', ''),
+    let nsId = ($RE_ID.test(script) ? $RE_ID.exec(script)[2] : id).replace('customscript', ''),
         nsObj = {
             id: nsId,
-            name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[1] : nsId.replace(/[_-]/g, ' '),
-            type: $RE_TYPE.test(script) ? $RE_TYPE.exec(script)[1] : type,
-            alias: $RE_ALIAS.test(script) ? $RE_ALIAS.exec(script)[1] : nsId,
-            desc: $RE_DESC.test(script) ? $RE_DESC.exec(script)[1] : '',
-            libs: $RE_LIBS.test(script) ? $RE_LIBS.exec(script)[1].split(',').map(parseStr) : [],
+            name: $RE_NAME.test(script) ? $RE_NAME.exec(script)[2] : nsId.replace(/[_-]/g, ' '),
+            type: $RE_TYPE.test(script) ? $RE_TYPE.exec(script)[2] : type,
+            alias: $RE_ALIAS.test(script) ? $RE_ALIAS.exec(script)[2] : nsId,
+            desc: $RE_DESC.test(script) ? $RE_DESC.exec(script)[2] : '',
+            libs: $RE_LIBS.test(script) ? $RE_LIBS.exec(script)[0].replace(/(@ns.libs:)|[' ]/g, '').split(',') : [],
             params: {}
         };
 
@@ -104,47 +112,35 @@ module.exports = (scriptPath, format) => {
     }
 
     switch (nsObj.type) {
-        case 'client': {
+        case 'client':
             nsObj.functions = {
-                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[1] : 'pageInit',
-                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[1] : 'saveRecord'
+                pageInit: $RE_FUNC_PAGE_INIT.test(script) ? $RE_FUNC_PAGE_INIT.exec(script)[2] : 'pageInit',
+                saveRecord: $RE_FUNC_SAVE_REC.test(script) ? $RE_FUNC_SAVE_REC.exec(script)[2] : 'saveRecord'
             };
-            let record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[1] : null;
-            if (record) {
-                nsObj.records = [record];
-            } else {
-                nsObj.records = $RE_RECORDS.test(script) ? $RE_RECORDS.exec(script)[0].split(',').map(parseStr) : [];
-            }
+            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
-        }
         case 'schedule':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'process';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'process';
             break;
         case 'suitelet':
-            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[1] : 'execute';
+            nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'execute';
             break;
         case 'restlet':
             nsObj.functions = {
-                get: $RE_FUNC_GET.test(script) ? $RE_FUNC_GET.exec(script)[1] : 'get',
-                delete: $RE_FUNC_DELETE.test(script) ? $RE_FUNC_DELETE.exec(script)[1] : 'delete',
-                post: $RE_FUNC_POST.test(script) ? $RE_FUNC_POST.exec(script)[1] : 'post',
-                put: $RE_FUNC_PUT.test(script) ? $RE_FUNC_PUT.exec(script)[1] : 'put'
+                get: $RE_FUNC_GET.test(script) ? $RE_FUNC_GET.exec(script)[2] : 'get',
+                delete: $RE_FUNC_DELETE.test(script) ? $RE_FUNC_DELETE.exec(script)[2] : 'delete',
+                post: $RE_FUNC_POST.test(script) ? $RE_FUNC_POST.exec(script)[2] : 'post',
+                put: $RE_FUNC_PUT.test(script) ? $RE_FUNC_PUT.exec(script)[2] : 'put'
             };
             break;
-        case 'user-event': {
+        case 'user-event':
             nsObj.functions = {
-                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[1] : 'beforeLoad',
-                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[1] : 'beforeSubmit',
-                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[1] : 'afterSubmit'
+                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[2] : 'beforeLoad',
+                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[2] : 'beforeSubmit',
+                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : 'afterSubmit'
             };
-            let record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[1] : '';
-            if (record) {
-                nsObj.records = [record];
-            } else {
-                nsObj.records = $RE_RECORDS.test(script) ? $RE_RECORDS.exec(script)[0].split(',').map(parseStr) : [];
-            }
+            nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
-        }
     }
 
     let reParam = new RegExp($RE_PARAM, 'g');
