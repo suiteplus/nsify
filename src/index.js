@@ -19,7 +19,7 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:-]*)("|'),?[ ]*)*/,
     $RE_RECORD = /@ns.record:[ ]*("|')([\w ]*)("|')/,
     $RE_FUNC = /@ns.function:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
-    //$RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
+//$RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
     $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ \t]*("|')([^\`'\n\r]*)("|')`),
     $RE_FUNC_BEFORE_LOAD = $RE_FUNC_DEF('beforeLoad'),
     $RE_FUNC_BEFORE_SMT = $RE_FUNC_DEF('beforeSubmit'),
@@ -72,7 +72,7 @@ module.exports = (scriptPath, format) => {
         return null;
     }
     let ext = ~scriptPath.indexOf('.js') ? '' : '.js',
-        filePath = `${scriptPath}${ext}` ;
+        filePath = `${scriptPath}${ext}`;
     if (!fs.existsSync(filePath)) {
         return null;
     }
@@ -82,6 +82,15 @@ module.exports = (scriptPath, format) => {
         prefix = name.substr(0, 2).toLowerCase(),
         type = $TYPES[prefix],
         id = (type ? name.substr(3) : name).replace(/[ ;:+=\|\\]/g, '_');
+
+    //TODO Leandro: Need fix this
+    if (!type) {
+        let words = name.split('-');
+        if (words.length > 1) {
+            let prefix = words[0].substr(0, 1) + words[1].substr(0, 1);
+            type = $TYPES[prefix];
+        }
+    }
 
     if (!type) {
         type = 'library';
@@ -147,16 +156,16 @@ module.exports = (scriptPath, format) => {
 
         case 'user-event':
             nsObj.functions = {
-                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[2] : 'beforeLoad',
-                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[2] : 'beforeSubmit',
-                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : 'afterSubmit'
+                beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[2] : '',
+                beforeSubmit: $RE_FUNC_BEFORE_SMT.test(script) ? $RE_FUNC_BEFORE_SMT.exec(script)[2] : '',
+                afterSubmit: $RE_FUNC_AFTER_SMT.test(script) ? $RE_FUNC_AFTER_SMT.exec(script)[2] : ''
             };
             nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
     }
 
     let reParam = new RegExp($RE_PARAM, 'g');
-    for (let match; (match = reParam.exec(script)); ) {
+    for (let match; (match = reParam.exec(script));) {
         let param = match[1],
             value = match[2];
         if (value[0] === '{') {
@@ -167,7 +176,7 @@ module.exports = (scriptPath, format) => {
             });
             nsObj.params[param] = paramObj;
         } else {
-            nsObj.params[param] = {type: value.substring(1, value.length-1)};
+            nsObj.params[param] = {type: value.substring(1, value.length - 1)};
         }
     }
 
