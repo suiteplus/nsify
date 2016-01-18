@@ -37,7 +37,8 @@ const $RE_ID = /@ns.id:[ ]*["|']([\w -\_]*)["|']/,
     $RE_FUNC_VALIDATE_INSERT = /@ns.functions.validateInsert:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_VALIDATE_DELETE = /@ns.functions.validateDelete:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_RECALC = /@ns.functions.recalc:[ ]*["|']([\w\.]*)["|']/,
-    $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((["|']([A-Za-z-]*)["|'])|({([A-Za-z-:'"\., ]*)}))`;
+    $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((["|']([A-Za-z-]*)["|'])|({([A-Za-z-:'"\., ]*)}))`,
+    $RE_FUNC_VALIDATE = (func) => new RegExp(`${func}[ \\n]*[:=][ \\n]*function[ \n]*\\(`, 'g');
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
 
@@ -177,6 +178,26 @@ module.exports = (scriptPath, format) => {
         } else {
             nsObj.params[param] = {type: value.substring(1, value.length-1)};
         }
+    }
+
+    let alias = nsObj.alias,
+        verifyFunction = (objBase, funcName, defFunc) => {
+            funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;
+            if ($RE_FUNC_VALIDATE(funcName).test(script)) {
+                objBase[defFunc] = funcName;
+            } else {
+                delete objBase[defFunc];
+            }
+        };
+    if (nsObj.functions) {
+        let funcs = nsObj.functions;
+        Object.keys(nsObj.functions).forEach(func => {
+            let funcName = funcs[func].trim();
+            verifyFunction(funcs, funcName, func);
+        });
+    } else if (nsObj.function) {
+        let funcName = nsObj.function.trim();
+        verifyFunction(nsObj, funcName, 'function');
     }
 
     if (format === 'nsmockup') {
