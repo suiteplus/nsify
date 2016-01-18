@@ -19,7 +19,7 @@ describe('Restlet JSON', () => {
         return done();
     });
 
-    it('Simple', done => {
+    it('Complex', done => {
         let scriptPath = `${__dirname}/_files/custom/restlet-simple`,
             nsObj = nsify(scriptPath);
 
