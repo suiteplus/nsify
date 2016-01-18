@@ -19,7 +19,8 @@ const $RE_ID = /@ns.id:[ ]*("|')([\w -\_]*)("|')/,
     $RE_LIBS = /@ns.libs:[ ]*(("|')([\w/\.:-]*)("|'),?[ ]*)*/,
     $RE_RECORD = /@ns.record:[ ]*("|')([\w ]*)("|')/,
     $RE_FUNC = /@ns.function:[ ]*(("|')([\w/\.:]*)("|'),?[ ]*)*/,
-    $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
+    //$RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ ]*("|')([\w\.]*)("|')`),
+    $RE_FUNC_DEF = (f) => new RegExp(`@ns.functions.${f}:[ \t]*("|')([^\`'\n\r]*)("|')`),
     $RE_FUNC_BEFORE_LOAD = $RE_FUNC_DEF('beforeLoad'),
     $RE_FUNC_BEFORE_SMT = $RE_FUNC_DEF('beforeSubmit'),
     $RE_FUNC_AFTER_SMT = $RE_FUNC_DEF('afterSubmit'),
@@ -126,12 +127,15 @@ module.exports = (scriptPath, format) => {
             };
             nsObj.record = $RE_RECORD.test(script) ? $RE_RECORD.exec(script)[2] : '';
             break;
+
         case 'schedule':
             nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'process';
             break;
+
         case 'suitelet':
             nsObj.function = $RE_FUNC.test(script) ? $RE_FUNC.exec(script)[3] : 'execute';
             break;
+
         case 'restlet':
             nsObj.functions = {
                 get: $RE_FUNC_GET.test(script) ? $RE_FUNC_GET.exec(script)[2] : 'get',
@@ -140,6 +144,7 @@ module.exports = (scriptPath, format) => {
                 put: $RE_FUNC_PUT.test(script) ? $RE_FUNC_PUT.exec(script)[2] : 'put'
             };
             break;
+
         case 'user-event':
             nsObj.functions = {
                 beforeLoad: $RE_FUNC_BEFORE_LOAD.test(script) ? $RE_FUNC_BEFORE_LOAD.exec(script)[2] : 'beforeLoad',
