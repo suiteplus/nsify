@@ -18,7 +18,7 @@ module.exports = (nsObj, filePath) => {
             libPath = path.resolve(`${dir}/${lib}${ext}`),
             libScript = nsify(libPath);
 
-        nskObj.files.push([libPath, libScript.alias]);
+        libScript && nskObj.files.push([libPath, libScript.alias]);
     });
 
     let alias = nskObj.alias;
