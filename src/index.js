@@ -78,7 +78,12 @@ const
      *
      * @param func {string} Function name.
      */
-    $RE_FUNC_VALIDATE = (func) => new RegExp(`${func}[ \\n]*[:=][ \\n]*function[ \n]*\\(`, 'g');
+    $RE_FUNC_VALIDATE = (func) => new RegExp(`${func}[ \\n]*[:=][ \\n]*function[ \n]*\\(`, 'g'),
+
+    /**
+     * Custom Annotations
+     */
+    $RE_CUSTOM = `@ns.custom.([A-Za-z0-9-\_]*):[ ]*["|']([A-Za-z-\_ ]*)["|']`;
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
 
@@ -204,6 +209,7 @@ module.exports = (scriptPath, format) => {
         }
     }
 
+    // Verify Parameters
     let reParam = new RegExp($RE_PARAM, 'g');
     for (let match; (match = reParam.exec(script)); ) {
         let param = match[1],
@@ -220,6 +226,17 @@ module.exports = (scriptPath, format) => {
         }
     }
 
+    // Verify Custom Annotations
+    let reCustom = new RegExp($RE_CUSTOM, 'g');
+    for (let match; (match = reCustom.exec(script)); ) {
+        if (!nsObj.custom) nsObj.custom = {};
+
+        let param = match[1],
+            value = match[2];
+        nsObj.custom[param] = value;
+    }
+
+    // Remove uncreated functions
     let alias = nsObj.alias,
         verifyFunction = (objBase, funcName, defFunc) => {
             funcName = funcName.indexOf(`${alias}.`) === 0 ? funcName.replace(`${alias}.`, '') : funcName;

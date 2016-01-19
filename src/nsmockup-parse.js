@@ -31,7 +31,7 @@ module.exports = (nsObj, filePath) => {
         nskObj.function = `${alias}.${nskObj.function}`;
     }
 
-    ['libs'].forEach(prop => {
+    ['libs', 'custom'].forEach(prop => {
         delete nskObj[prop];
     });
     return nskObj;

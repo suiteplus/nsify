@@ -62,6 +62,11 @@ describe('Schedule JSON', () => {
 
         should(nsObj).have.property('libs');
         should(nsObj.libs).have.containEql('schedule-simple');
+
+        should(nsObj).have.property('custom');
+        let custom = nsObj.custom;
+        should(custom).have.property('my-custom-annotation_1', 'My value Anotations Legal');
+        should(custom).have.property('custom-Annot4ti0n_2', 'var a');
         return done();
     });
 
