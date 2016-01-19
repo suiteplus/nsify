@@ -36,12 +36,12 @@ const
     /**
      * Others libraries for SuiteScript
      */
-    $RE_LIBS = /@ns.libs:[ ]*(["|'][\w/\.:-]*["|'],?[ ]*)*/,
+    $RE_LIBS = /@ns.libs:[ ]*(['|"][\w\/'", -]*\n)/,
     /**
      * Configure any record for Client or User Event
      */
     $RE_RECORD = /@ns.record:[ ]*["|']([\w ]*)["|']/,
-    $RE_RECORDS = /@ns.records:[ ]*(["|'][\w/\.:-]*["|'],?[ ]*)*/,
+    $RE_RECORDS = /@ns.records:[ ]*(['|"][\w\/'", -]*\n)/,
 
     /**
      * SuiteScript Functions
@@ -110,7 +110,8 @@ var parseStr = (l) => l.replace(/['|"]/g, '').trim();
  *    },
  *    libs: [string],
  *    params: object,
- *    [records]: [string]
+ *    [records]: [string],
+ *    [custom]: object
  * }}
  */
 module.exports = (scriptPath, format) => {
