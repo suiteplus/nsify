@@ -11,22 +11,53 @@ const $TYPES = {
     ue: 'user-event'
 };
 
-const $RE_ID = /@ns.id:[ ]*["|']([\w -\_]*)["|']/,
+const
+    /**
+     * SuiteScript ID
+     */
+    $RE_ID = /@ns.id:[ ]*["|']([\w -\_]*)["|']/,
+    /**
+     * SuiteScript Name
+     */
     $RE_NAME = /@ns.name:[ ]*["|']([\w ]*)["|']/,
+    /**
+     * SuiteScript Type
+     * @defaults ['client', 'schedule', 'suitelet', 'restlet', 'user-event']
+     */
     $RE_TYPE = /@ns.type:[ ]*["|']([\w -]*)["|']/,
+    /**
+     * SuiteScript Alias
+     */
     $RE_ALIAS = /@ns.alias:[ ]*["|']([\w ]*)["|']/,
+    /**
+     * SuiteScript Description
+     */
     $RE_DESC = /@ns.desc:[ ]*["|']([\w -\_|]*)["|']/,
+    /**
+     * Others libraries for SuiteScript
+     */
     $RE_LIBS = /@ns.libs:[ ]*(["|'][\w/\.:-]*["|'],?[ ]*)*/,
+    /**
+     * Configure any record for Client or User Event
+     */
     $RE_RECORD = /@ns.record:[ ]*["|']([\w ]*)["|']/,
     $RE_RECORDS = /@ns.records:[ ]*(["|'][\w/\.:-]*["|'],?[ ]*)*/,
+
+    /**
+     * SuiteScript Functions
+     */
+    /** Function for Schedule or Suitelet */
     $RE_FUNC = /@ns.function:[ ]*["|']([\w/\.:]*)["|']/,
+    /** Functions for User Event */
     $RE_FUNC_BEFORE_LOAD = /@ns.functions.beforeLoad:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_BEFORE_SMT = /@ns.functions.beforeSubmit:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_AFTER_SMT = /@ns.functions.afterSubmit:[ ]*["|']([\w\.]*)["|']/,
+    /** Functions for RESTlet */
     $RE_FUNC_POST = /@ns.functions.post:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_GET = /@ns.functions.get:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_DELETE = /@ns.functions.delete:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_PUT = /@ns.functions.put:[ ]*["|']([\w\.]*)["|']/,
+    /** Functions for Client */
     $RE_FUNC_PAGE_INIT = /@ns.functions.pageInit:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_SAVE_REC = /@ns.functions.saveRecord:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_VALIDATE_FIELD = /@ns.functions.validateField:[ ]*["|']([\w\.]*)["|']/,
@@ -37,7 +68,16 @@ const $RE_ID = /@ns.id:[ ]*["|']([\w -\_]*)["|']/,
     $RE_FUNC_VALIDATE_INSERT = /@ns.functions.validateInsert:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_VALIDATE_DELETE = /@ns.functions.validateDelete:[ ]*["|']([\w\.]*)["|']/,
     $RE_FUNC_RECALC = /@ns.functions.recalc:[ ]*["|']([\w\.]*)["|']/,
+    /**
+     * SuiteScript Parameters
+     */
     $RE_PARAM = `@ns.params.([A-Za-z0-9-\_]*):[ ]*((["|']([A-Za-z-]*)["|'])|({([A-Za-z-:'"\., ]*)}))`,
+
+    /**
+     * Validate if functions exists in script.
+     *
+     * @param func {string} Function name.
+     */
     $RE_FUNC_VALIDATE = (func) => new RegExp(`${func}[ \\n]*[:=][ \\n]*function[ \n]*\\(`, 'g');
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
