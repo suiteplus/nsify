@@ -66,7 +66,8 @@ describe('Schedule JSON', () => {
         should(nsObj).have.property('custom');
         let custom = nsObj.custom;
         should(custom).have.property('my-custom-annotation_1', 'My value Anotations Legal');
-        should(custom).have.property('custom-Annot4ti0n_2', 'var a');
+        should(custom).have.property('custom-Annot4ti0n_2', 'var a...');
+        should(custom).have.property('custom-annotationPath', '../lib/japones.js');
         return done();
     });
 

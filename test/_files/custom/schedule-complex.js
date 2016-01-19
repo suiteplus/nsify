@@ -9,7 +9,8 @@
  * @ns.params.my-param_SiMple: 'INTEGER'
  * @ns.libs: 'schedule-simple','a', 'b','c'
  * @ns.custom.my-custom-annotation_1: 'My value Anotations Legal'
- * @ns.custom.custom-Annot4ti0n_2: 'var a'
+ * @ns.custom.custom-Annot4ti0n_2: 'var a...'
+ * @ns.custom.custom-annotationPath: '../lib/japones.js'
  */
 'use strict';
 module.exports = {

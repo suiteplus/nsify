@@ -83,7 +83,7 @@ const
     /**
      * Custom Annotations
      */
-    $RE_CUSTOM = `@ns.custom.([A-Za-z0-9-\_]*):[ ]*["|']([A-Za-z-\_ ]*)["|']`;
+    $RE_CUSTOM = `@ns.custom.([A-Za-z0-9-\_]*):[ ]*["|']([A-Za-z-\_ \.\/]*)["|']`;
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
 
