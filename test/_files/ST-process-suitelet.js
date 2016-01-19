@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-    process: function() {
+    execute: function() {
         return 'default';
     }
 };

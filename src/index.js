@@ -119,7 +119,7 @@ module.exports = (scriptPath, format) => {
         return null;
     }
     let ext = ~scriptPath.indexOf('.js') ? '' : '.js',
-        filePath = `${scriptPath}${ext}` ;
+        filePath = `${scriptPath}${ext}`;
     if (!fs.existsSync(filePath)) {
         return null;
     }
@@ -223,7 +223,7 @@ module.exports = (scriptPath, format) => {
             });
             nsObj.params[param] = paramObj;
         } else {
-            nsObj.params[param] = {type: value.substring(1, value.length-1)};
+            nsObj.params[param] = {type: value.substring(1, value.length - 1)};
         }
     }
 

@@ -3,32 +3,32 @@
 var nsify = require('../'),
     should = require('should');
 
-describe('User Event JSON', () => {
+describe('Restlet JSON', () => {
 
     it('Default', (done) => {
-        let scriptPath = `${__dirname}/_files/UE-process-userevent.js`,
+        let scriptPath = `${__dirname}/_files/RE-process-restlet.js`,
             nsObj = nsify(scriptPath);
 
         should(nsObj).be.ok();
-        should(nsObj).have.property('id', 'process-userevent');
-        should(nsObj).have.property('name', 'Process Userevent');
+        should(nsObj).have.property('id', 'process-restlet');
+        should(nsObj).have.property('name', 'Process Restlet');
         should(nsObj).have.property('desc', '');
-        should(nsObj).have.property('type', 'user-event');
-        should(nsObj).have.property('alias', 'ProcessUserevent');
+        should(nsObj).have.property('type', 'restlet');
+        should(nsObj).have.property('alias', 'ProcessRestlet');
 
         return done();
     });
 
-    it('Complex', (done) => {
-        let scriptPath = `${__dirname}/_files/custom/user-event-complex`,
+    it('Complex', done => {
+        let scriptPath = `${__dirname}/_files/custom/restlet-simple`,
             nsObj = nsify(scriptPath);
 
         should(nsObj).be.ok();
-        should(nsObj).have.property('id', 'my-user-event-complex');
-        should(nsObj).have.property('name', 'MY User Event Complex');
-        should(nsObj).have.property('desc', 'My Userevent complex Description');
-        should(nsObj).have.property('type', 'user-event');
-        should(nsObj).have.property('alias', 'MyUserEventComplex');
+        should(nsObj).have.property('id', 'my-restlet-simple');
+        should(nsObj).have.property('name', 'MY Restlet Simple');
+        should(nsObj).have.property('desc', 'My Restlet Simple Description');
+        should(nsObj).have.property('type', 'restlet');
+        should(nsObj).have.property('alias', 'MyRestletSimple');
 
         nsObj.libs.should.eql(['my-lib-01', 'my-lib-02']);
 
