@@ -9,9 +9,7 @@ module.exports = (nsObj, filePath) => {
     }
 
     let dir = path.dirname(filePath);
-    nskObj.files = [
-        [filePath, nskObj.alias]
-    ];
+    nskObj.files = [];
 
     nskObj.libs.forEach(lib => {
         let ext = ~lib.indexOf('.js') ? '' : '.js',
@@ -20,6 +18,8 @@ module.exports = (nsObj, filePath) => {
 
         libScript && nskObj.files.push([libPath, libScript.alias]);
     });
+    // add main file after libs
+    nskObj.files.push([filePath, nskObj.alias]);
 
     let alias = nskObj.alias;
     if (nskObj.functions) {

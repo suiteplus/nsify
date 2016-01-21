@@ -36,7 +36,7 @@ const
     /**
      * Others libraries for SuiteScript
      */
-    $RE_LIBS = /@ns.libs:[ ]*(['|"][\w\/'", -]*\n)/,
+    $RE_LIBS = /@ns.libs:[ ]*(['|"][\w\/'", -\.]*\n)/,
     /**
      * Configure any record for Client or User Event
      */
