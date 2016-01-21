@@ -93,8 +93,8 @@ describe('Schedule JSON', () => {
         should(nsObj).have.property('files').length(2);
         let files = nsObj.files;
         [
-            [`${__dirname}/_files/custom/schedule-complex.js`, 'MySchedule'],
-            [`${__dirname}/_files/custom/schedule-simple.js`, 'MyScheduleSimple']
+            [`${__dirname}/_files/custom/schedule-simple.js`, 'MyScheduleSimple'],
+            [`${__dirname}/_files/custom/schedule-complex.js`, 'MySchedule']
         ].forEach((line, i) => {
             let file = files[i];
             should(file).length(line.length);
