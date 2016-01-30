@@ -7,7 +7,7 @@ describe('User Event JSON', () => {
 
     it('Default', (done) => {
         let scriptPath = `${__dirname}/_files/UE-process-userevent.js`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'process-userevent');
@@ -21,7 +21,7 @@ describe('User Event JSON', () => {
 
     it('Complex', (done) => {
         let scriptPath = `${__dirname}/_files/custom/user-event-complex`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'my-user-event-complex');

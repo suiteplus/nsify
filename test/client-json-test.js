@@ -7,7 +7,7 @@ describe('Client JSON', () => {
 
     it('Default', (done) => {
         let scriptPath = `${__dirname}/_files/CL-process-client.js`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'process-client');
@@ -24,7 +24,7 @@ describe('Client JSON', () => {
 
     it('Simple', done => {
         let scriptPath = `${__dirname}/_files/custom/client-simple`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'my-client-simple');
@@ -41,7 +41,7 @@ describe('Client JSON', () => {
 
     it('Simple - with methods', done => {
         let scriptPath = `${__dirname}/_files/custom/client-simple-with-methods`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'my-client-with-methods');
@@ -65,7 +65,7 @@ describe('Client JSON', () => {
     /*
     it('Custom - Format: nsmockup', done => {
         let scriptPath = `${__dirname}/_files/custom/schedule-complex`,
-            nsObj = nsify(scriptPath, 'nsmockup');
+            nsObj = nsify.annotation(scriptPath, 'nsmockup');
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'customscriptmy-schedule-complex');

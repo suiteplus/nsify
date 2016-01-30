@@ -7,7 +7,7 @@ describe('Suitelet JSON', () => {
 
     it('Default', (done) => {
         let scriptPath = `${__dirname}/_files/ST-process-suitelet.js`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'process-suitelet');
@@ -21,7 +21,7 @@ describe('Suitelet JSON', () => {
 
     it('Complex', (done) => {
         let scriptPath = `${__dirname}/_files/custom/suitelet-complex`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'my-suitelet-complex');

@@ -7,7 +7,7 @@ describe('Restlet JSON', () => {
 
     it('Default', (done) => {
         let scriptPath = `${__dirname}/_files/RE-process-restlet.js`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'process-restlet');
@@ -21,7 +21,7 @@ describe('Restlet JSON', () => {
 
     it('Complex', done => {
         let scriptPath = `${__dirname}/_files/custom/restlet-simple`,
-            nsObj = nsify(scriptPath);
+            nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
         should(nsObj).have.property('id', 'my-restlet-simple');

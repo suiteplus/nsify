@@ -3,6 +3,9 @@
   "version": "0.2.0-pre",
   "description": "NetSuite-side require() the node.js",
   "main": "src/index.js",
+  "bin": {
+    "nsify": "./src/cli.js"
+  },
   "scripts": {
     "test": "gulp test",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
@@ -26,12 +29,19 @@
   },
   "homepage": "https://github.com/suiteplus/nsify#readme",
   "dependencies": {
-    "uppercamelcase": "^1.1.0"
+    "browserify": "^13.0.0",
+    "gulp": "^3.9.0",
+    "gulp-cat": "^0.3.3",
+    "gulp-uglify": "^1.5.1",
+    "through2": "^2.0.0",
+    "uppercamelcase": "^1.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^3.32.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.6",
     "eslint-plugin-mocha": "^1.1.0",
-    "gulp": "^3.9.0",
     "gulp-eslint": "^1.1.1",
     "gulp-istanbul": "^0.10.3",
     "gulp-load-plugins": "^1.2.0",

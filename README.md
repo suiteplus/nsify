@@ -11,11 +11,11 @@
     npm install nsify --save-dev
 ```
 
-### Usage
+### Usage NS Annotations
 
 ```javascript
 var nsify = require('nsify'),
-    nsObj = nsify('./my-schedule.js');
+    nsObj = nsify.annotation('./my-schedule.js');
 
 console.log(nsObj); // see output
 ```
