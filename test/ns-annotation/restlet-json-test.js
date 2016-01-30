@@ -1,12 +1,12 @@
 'use strict';
 
-var nsify = require('../'),
+var nsify = require('../../.'),
     should = require('should');
 
-describe('Restlet JSON', () => {
+describe('<Restlet JSON>', () => {
 
     it('Default', (done) => {
-        let scriptPath = `${__dirname}/_files/RE-process-restlet.js`,
+        let scriptPath = `${__dirname}/../_files/RE-process-restlet.js`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -20,7 +20,7 @@ describe('Restlet JSON', () => {
     });
 
     it('Complex', done => {
-        let scriptPath = `${__dirname}/_files/custom/restlet-simple`,
+        let scriptPath = `${__dirname}/../_files/custom/restlet-simple`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();

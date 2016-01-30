@@ -118,6 +118,8 @@ var parseStr = (l) => l.replace(/['|"]/g, '').trim();
 module.exports = (scriptPath, format) => {
     if (!scriptPath) {
         return null;
+    } else {
+        scriptPath = path.resolve(scriptPath);
     }
     let ext = ~scriptPath.indexOf('.js') ? '' : '.js',
         filePath = `${scriptPath}${ext}`;

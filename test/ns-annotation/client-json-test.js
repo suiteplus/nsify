@@ -1,12 +1,12 @@
 'use strict';
 
-var nsify = require('../'),
+var nsify = require('../../'),
     should = require('should');
 
-describe('Client JSON', () => {
+describe('<Client JSON>', () => {
 
     it('Default', (done) => {
-        let scriptPath = `${__dirname}/_files/CL-process-client.js`,
+        let scriptPath = `${__dirname}/../_files/CL-process-client.js`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -23,7 +23,7 @@ describe('Client JSON', () => {
     });
 
     it('Simple', done => {
-        let scriptPath = `${__dirname}/_files/custom/client-simple`,
+        let scriptPath = `${__dirname}/../_files/custom/client-simple`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -40,7 +40,7 @@ describe('Client JSON', () => {
     });
 
     it('Simple - with methods', done => {
-        let scriptPath = `${__dirname}/_files/custom/client-simple-with-methods`,
+        let scriptPath = `${__dirname}/../_files/custom/client-simple-with-methods`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -64,7 +64,7 @@ describe('Client JSON', () => {
     });
     /*
     it('Custom - Format: nsmockup', done => {
-        let scriptPath = `${__dirname}/_files/custom/schedule-complex`,
+        let scriptPath = `${__dirname}/../_files/custom/schedule-complex`,
             nsObj = nsify.annotation(scriptPath, 'nsmockup');
 
         should(nsObj).be.ok();
@@ -86,8 +86,8 @@ describe('Client JSON', () => {
         should(nsObj).have.property('files').length(2);
         let files = nsObj.files;
         [
-            [`${__dirname}/_files/custom/schedule-complex.js`, 'MySchedule'],
-            [`${__dirname}/_files/custom/schedule-simple.js`, 'MyScheduleSimple']
+            [`${__dirname}/../_files/custom/schedule-complex.js`, 'MySchedule'],
+            [`${__dirname}/../_files/custom/schedule-simple.js`, 'MyScheduleSimple']
         ].forEach((line, i) => {
             let file = files[i];
             should(file).length(line.length);

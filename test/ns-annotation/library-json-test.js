@@ -1,12 +1,12 @@
 'use strict';
 
-var nsify = require('../'),
+var nsify = require('../../.'),
     should = require('should');
 
-describe('Library JSON', () => {
+describe('<Library JSON>', () => {
 
     it('Default', (done) => {
-        let scriptPath = `${__dirname}/_files/library.js`,
+        let scriptPath = `${__dirname}/../_files/library.js`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();

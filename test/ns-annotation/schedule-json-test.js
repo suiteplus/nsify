@@ -1,11 +1,12 @@
 'use strict';
 
-var nsify = require('../'),
+var nsify = require('../../.'),
+    path = require('path'),
     should = require('should');
 
-describe('Schedule JSON', () => {
+describe('<Schedule JSON>', () => {
     it('Default', (done) => {
-        let scriptPath = `${__dirname}/_files/SC-process-schedule.js`,
+        let scriptPath = `${__dirname}/../_files/SC-process-schedule.js`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -19,7 +20,7 @@ describe('Schedule JSON', () => {
     });
 
     it('Custom - Simple', done => {
-        let scriptPath = `${__dirname}/_files/custom/schedule-simple`,
+        let scriptPath = `${__dirname}/../_files/custom/schedule-simple`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -38,7 +39,7 @@ describe('Schedule JSON', () => {
     });
 
     it('Custom - Complex', done => {
-        let scriptPath = `${__dirname}/_files/custom/schedule-complex`,
+        let scriptPath = `${__dirname}/../_files/custom/schedule-complex`,
             nsObj = nsify.annotation(scriptPath);
 
         should(nsObj).be.ok();
@@ -72,7 +73,7 @@ describe('Schedule JSON', () => {
     });
 
     it('Custom - Format: nsmockup', done => {
-        let scriptPath = `${__dirname}/_files/custom/schedule-complex`,
+        let scriptPath = `${__dirname}/../_files/custom/schedule-complex`,
             nsObj = nsify.annotation(scriptPath, 'nsmockup');
 
         should(nsObj).be.ok();
@@ -93,14 +94,14 @@ describe('Schedule JSON', () => {
         should(nsObj).have.property('files').length(2);
         let files = nsObj.files;
         [
-            [`${__dirname}/_files/custom/schedule-simple.js`, 'MyScheduleSimple'],
-            [`${__dirname}/_files/custom/schedule-complex.js`, 'MySchedule']
+            [`${__dirname}/../_files/custom/schedule-simple.js`, 'MyScheduleSimple'],
+            [`${__dirname}/../_files/custom/schedule-complex.js`, 'MySchedule']
         ].forEach((line, i) => {
             let file = files[i];
             should(file).length(line.length);
-            for (let l = 0; l < line.length; l++) {
-                should(file[l]).be.equal(line[l]);
-            }
+
+            should(file[0]).be.equal(path.resolve(line[0]));
+            should(file[1]).be.equal(line[1]);
 
         });
         return done();

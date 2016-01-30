@@ -7,7 +7,10 @@ var gulp = require('gulp'),
     plugins = gulpLoadPlugins(),
     appRoot = process.cwd(),
     paths = {
-        js: [`${appRoot}/src/**/*.js`],
+        js: [
+            `${appRoot}/src/**/*.js`,
+            `!${appRoot}/src/other/*.js`
+        ],
         jsTests: [`${appRoot}/test/**/*-test.js`]
     };
 var defaultTasks = ['env:test', 'test:eslint', 'test:coverage'];
@@ -46,7 +49,7 @@ gulp.task('test:coverage', ['test:eslint'], function () {
     };
 
     // instrumentation nsapi.js
-    gulp.src(paths.js.concat([`!${appRoot}/src/server/**/*.js`]))
+    gulp.src(paths.js)
         .pipe(plugins.istanbul({
             includeUntested: true
 
