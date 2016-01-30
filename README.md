@@ -3,12 +3,25 @@
 
 *NetSuite-side require() the node.js*  
 
+You can use `require()` the node.js freely on yours JavaScripts.
+
 ## Required
  * node.js 4+
 
 ## Install [![Dependency Status][david-image]][david-url] [![devDependency Status][david-image-dev]][david-url-dev]
 ```bash
-    npm install nsify --save-dev
+    sudo npm install nsify -g
+```
+
+### Command Line
+  
+  Generate your SuiteScripts:
+  
+ * input: [restlet-with-require.js](./test/_files/custom/restlet-with-require.js)
+ * output: [suite-script-nsify-restlet.js](./test/_files/output/suite-script-nsify-restlet.js) 
+ 
+```bash
+    nsify ./test/_files/RE-process-restlet.js >> suite-script-process-restlet.js
 ```
 
 ### Usage NS Annotations

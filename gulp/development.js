@@ -44,6 +44,12 @@ gulp.task('dev:mocha', ['dev:eslint'], function () {
         }));
 });
 
+gulp.task('dev:gen-libs', function() {
+    return gulp.src(`${appRoot}/lib/*.js`)
+        .pipe(plugins.uglify())
+        .pipe(gulp.dest(`${appRoot}/src/other`))
+});
+
 gulp.task('watch', ['dev:mocha'], function () {
     gulp.watch(paths.js.concat(paths.jsTests), ['dev:eslint', 'dev:mocha'])
         .on('error', e => console.error(e));
