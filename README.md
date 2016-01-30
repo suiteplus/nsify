@@ -28,31 +28,14 @@ You can use `require()` the node.js freely on yours JavaScripts.
 
 ```javascript
 var nsify = require('nsify'),
-    nsObj = nsify.annotation('./my-schedule.js');
+    filePath = './test/_files/custom/schedule-simple.js',
+    nsObj = nsify.annotation(filePath);
 
 console.log(nsObj); // see output
 ```
 
-#### my-schedule.js
-```javascript
-/**
- * @ns.id: 'sp-schedule'
- * @ns.type: 'schedule'
- * @ns.alias: 'MySchedule'
- * @ns.libs: 'my-lib.js'
- * @ns.function: 'process'
- * @ns.params.param1: {name:'Param 1', type: 'INTEGER'}
- */
-'use strict';
-
-module.exports = {
-    process: function() {
-        nlapiLogExecution('DEBUG', 'nsify', 'test ok!')
-    }
-}
-``` 
-
-#### output my-schedule.js
+ * input: [schedule-simple.js](./test/_files/custom/schedule-simple.js)
+ * output: 
 ```json
 {
     "id": "sp-schedule",
@@ -66,6 +49,29 @@ module.exports = {
         "param1": {"name": "Param 1", "type": "INTEGER"}
     }
 }
+```
+
+#### Compatibility with [nsmockup](https://github.com/suiteplus/nsmockup)
+
+```javascript
+var nsify = require('nsify'),
+    nsmockup = require('nsmockup');
+
+
+nsmockup.init(function() {
+    let filePath = './test/_files/custom/schedule-simple.js',
+        script = nsify.annotation(filePath, 'nsmockup');
+
+    console.log(script); // see output
+    
+    nsmockup.createSuiteScript(script.type, script, function($ctx) {
+        let alias = script.alias;
+        if ($ctx[alias]) {
+            console.log(':D works!!');
+        }
+    });
+});
+
 ```
 
 [npm-url]: https://npmjs.org/package/nsify
