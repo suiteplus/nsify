@@ -21,4 +21,20 @@ describe('<Generate NetSuite Pack>', () => {
                 return done();
             }));
     });
+
+    it('run nsify with require() and concat', done => {
+        let file = `${__dirname}/_files/custom/schedule-with-require.js`;
+
+        nsify(file)
+            .pipe(through.obj(function (chunk) {
+                var buffer = chunk.contents;
+
+                let out = `${__dirname}/_files/output/suite-script-nsify-schedule.js`,
+                    content = fs.readFileSync(out, 'utf8');
+
+                should(buffer).be.ok();
+                should(buffer.toString()).be.equal(content);
+                return done();
+            }));
+    });
 });

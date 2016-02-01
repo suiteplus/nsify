@@ -8,7 +8,8 @@ var gulp = require('gulp'),
     paths = {
         js: [
             `${appRoot}/gulp/**/*.js`,
-            `${appRoot}/src/**/*.js`
+            `${appRoot}/src/**/*.js`,
+            `!${appRoot}/src/other/*.js`
         ],
         jsTests: [`${appRoot}/test/**/*-test.js`]
     };
@@ -47,7 +48,7 @@ gulp.task('dev:mocha', ['dev:eslint'], function () {
 gulp.task('dev:gen-libs', function() {
     return gulp.src(`${appRoot}/lib/*.js`)
         .pipe(plugins.uglify())
-        .pipe(gulp.dest(`${appRoot}/src/other`))
+        .pipe(gulp.dest(`${appRoot}/src/other`));
 });
 
 gulp.task('watch', ['dev:mocha'], function () {

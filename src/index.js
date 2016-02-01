@@ -1,5 +1,6 @@
 'use strict';
 var fs = require('fs'),
+    path = require('path'),
     nsAnnotation = require('./ns-annotation'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
@@ -7,25 +8,16 @@ var fs = require('fs'),
     gulp = require('gulp'),
     through = require('through2');
 
-
-function nsify(scriptPath, opts) {
-    opts = opts || {};
-
+function nsify(scriptPath) {
     let script = nsAnnotation(scriptPath),
         custom = script.custom || {};
     custom.clientProof = custom.clientProof === 'true' || script.type === 'client';
 
     let finalName = `${script.id}.js`,
-        sobj = {
-            alias: script.alias,
-            name: finalName,
-            config: custom || {}
-        },
-        name = sobj.name,
-        config = sobj.config;
+        config = custom || {};
 
-    if (name.indexOf('_') === 0) {
-        name = name.substr(1);
+    if (finalName.indexOf('_') === 0) {
+        finalName = finalName.substr(1);
     }
 
     let bns,
@@ -38,7 +30,7 @@ function nsify(scriptPath, opts) {
         let bwf = browserify(scriptPath, opts_);
         bwf.pipeline.get('dedupe');
         bns = bwf.bundle()
-            .pipe(source(~name.indexOf('.js') ? name : `${name}.js`));
+            .pipe(source(finalName));
     } else {
         bns = gulp.src(scriptPath);
     }
@@ -46,7 +38,6 @@ function nsify(scriptPath, opts) {
     return bns.pipe(buffer())
         .pipe(through.obj(function (chunk, enc, cb) {
             var content = chunk.contents.toString();
-
             content = content.replace(/['"]use strict['"];?/g, '');
 
             if (nodeBased) {
@@ -54,15 +45,56 @@ function nsify(scriptPath, opts) {
                     idx = content.substr(lastFunc).replace(/[^\d]/g, '').trim();
 
                 var pre = `var script = `,
-                    pos = `\nvar ${sobj.alias} = script(${idx});`,
-                    out = pre + content + pos;
-                chunk.contents = new Buffer(out);
-            } else {
-                chunk.contents = new Buffer(content);
+                    pos = `\nvar ${script.alias} = script(${idx});`;
+                content = pre + content + pos;
             }
-            this.push(chunk);
-            return cb();
+
+            // verify - concat libs
+            let filesJs = [];
+            if (config.concat) {
+                let dirPath = path.dirname(scriptPath),
+                    concat = config.concat.split(',');
+                for (let c = 0; c < concat.length; c++) {
+                    let lib = concat[c];
+                    if (!lib || !lib.trim()) {
+                        continue;
+                    } else {
+                        lib = lib.replace(/['"]/g, '').trim();
+                        let libPath = path.join(dirPath, lib);
+                        filesJs.push(libPath);
+                    }
+                }
+            }
+
+            let that = this,
+                chunks = [],
+                actual = 0,
+                verifyEnd = () => {
+                    if (++actual === filesJs.length + 1) {
+                        let finalContent = '';
+                        for (let k = 0; k < chunks.length; k++) {
+                            let libChunk = chunks[k],
+                                append = libChunk.contents.toString();
+                            finalContent += `${append}\n`;
+                        }
+                        finalContent += content;
+
+                        chunk.contents = new Buffer(finalContent);
+                        that.push(chunk);
+                        return cb();
+                    }
+                };
+
+            for (let f = 0; f < filesJs.length; f++) {
+                let libPath = filesJs[f];
+                nsify(libPath).pipe(through.obj(function (chunk) {
+                    chunks.push(chunk);
+                    verifyEnd();
+                }));
+            }
+            verifyEnd();
         }));
+
 }
 nsify.annotation = nsAnnotation;
 

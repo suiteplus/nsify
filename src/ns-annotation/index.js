@@ -36,7 +36,7 @@ const
     /**
      * Others libraries for SuiteScript
      */
-    $RE_LIBS = /@ns.libs:[ ]*(['|"][\w\/'", -\.]*\n)/,
+    $RE_LIBS = /@ns.libs:[ ]*(['|"][\w\/'", -\.]*)\n/,
     /**
      * Configure any record for Client or User Event
      */
@@ -83,7 +83,7 @@ const
     /**
      * Custom Annotations
      */
-    $RE_CUSTOM = `@ns.custom.([A-Za-z0-9-\_]*):[ ]*["|']([A-Za-z-\_ \.\/]*)["|']`;
+    $RE_CUSTOM = `@ns.custom.([A-Za-z0-9-\\_]*):[ ]*["|']([\\w\\/'", -\\.]*)\\n`;
 
 var parseStr = (l) => l.replace(/['|"]/g, '').trim();
 
@@ -112,6 +112,10 @@ var parseStr = (l) => l.replace(/['|"]/g, '').trim();
  *    libs: [string],
  *    params: object,
  *    [records]: [string],
+ *    [config]: {
+ *      [noAlias]: boolean,
+ *      [concat]: [string]
+ *    },
  *    [custom]: object
  * }}
  */
@@ -237,7 +241,7 @@ module.exports = (scriptPath, format) => {
 
         let param = match[1],
             value = match[2];
-        nsObj.custom[param] = value;
+        nsObj.custom[param] = value.replace(/['"]/g, '').trim();
     }
 
     // Remove uncreated functions
