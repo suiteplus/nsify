@@ -1,6 +1,6 @@
 {
   "name": "nsify",
-  "version": "0.2.1",
+  "version": "0.2.2-pre",
   "description": "NetSuite-side require() the node.js",
   "main": "src/index.js",
   "bin": {
